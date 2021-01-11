@@ -4,32 +4,30 @@ using UnityEngine;
 
 public class PoolingManager : MonoBehaviour
 {
-    private static PoolingManager instance;
+	#region Singleton
+	static PoolingManager instance;
     public static PoolingManager Instance { 
         get { 
             return instance; 
-        } 
-    }
-
-    public GameObject impactEffect;
-    public int impactAmount = 5;
-
-    private List<GameObject> impacts;
-
-    void Awake() {
-        instance = this;
-        impacts = new List<GameObject>(impactAmount);
-
-        for (int i = 0; i < impactAmount; i++) {
-            GameObject effectInstance = Instantiate(impactEffect);
-            effectInstance.transform.SetParent(transform);
-            effectInstance.SetActive(false);
-
-            impacts.Add(effectInstance);
         }
     }
-    
-    public GameObject GetImpact() {
+    void Awake() {
+        if (instance != null) {
+            Destroy(this);
+            return;
+        }
+        instance = this;
+    }
+    #endregion
+
+	public GameObject impactEffect;
+    private List<GameObject> impacts;
+
+	private void Start() {
+        impacts = new List<GameObject>();
+    }
+
+	public GameObject GetImpact() {
         foreach (GameObject impact in impacts) {
             if (!impact.activeInHierarchy) {
                 impact.SetActive(true);
@@ -37,8 +35,7 @@ public class PoolingManager : MonoBehaviour
             }
         }
 
-        GameObject effectInstance = Instantiate(impactEffect);
-        effectInstance.transform.SetParent(transform);
+        GameObject effectInstance = Instantiate(impactEffect, transform);
         impacts.Add(effectInstance);
 
         return effectInstance;

@@ -5,15 +5,13 @@ using UnityEngine;
 public class GravGun : MonoBehaviour
 {
     public Transform floatLocation;
+    public float floatSpeed = 15f;
     public float launchSpeed = 30f;
     public float gravRange = 15f;
     public Camera fpsCam;
 
-    Target target;
-    Rigidbody targetRig;
+    Rigidbody targetRb;
     bool isAttracting;
-    bool isLaunching;
-
 
     // Update is called once per frame
     void Update()
@@ -25,51 +23,43 @@ public class GravGun : MonoBehaviour
 
         if (isAttracting) {
             if (Input.GetMouseButtonDown(1))
-                isLaunching = true;
-        }
-    }
-
-    private void FixedUpdate() {
-        if (isAttracting)
-            Attract();
-        else if (!isAttracting)
+                Throw();
+            else
+                Attract();
+        } else
             Release();
-        if (isLaunching)
-            Throw();
     }
 
     private void Attract() {
-        RaycastHit hit;
+        if (targetRb == null) {
+            RaycastHit hit;
 
-        if (target == null) {
             if (Physics.Raycast(fpsCam.transform.position, fpsCam.transform.forward, out hit, gravRange)) {
                 Debug.Log(hit.transform.name);
 
-                target = hit.transform.GetComponent<Target>();
-                if (target != null) {
-                    targetRig = target.GetComponent<Rigidbody>();
-                    targetRig.useGravity = false;
-                    target.transform.position = Vector3.MoveTowards(target.transform.position, floatLocation.position, 0.3f);
+                Grabbable gr = hit.transform.GetComponent<Grabbable>();
+                if (gr != null && gr.isGrabbable) {
+                    targetRb = hit.transform.GetComponent<Rigidbody>();
+                    targetRb.useGravity = false;
                 }
             }
         }
         else
-            target.transform.position = Vector3.MoveTowards(target.transform.position, floatLocation.position, 0.3f);
+            targetRb.transform.position = Vector3.MoveTowards(targetRb.transform.position, floatLocation.position, floatSpeed * Time.deltaTime);
     }
 
     private void Release() {
-        if (target != null) {
-            targetRig.useGravity = true;
-            target = null;
+        if (targetRb != null) {
+            targetRb.useGravity = true;
+            targetRb = null;
         }
     }
 
     private void Throw() {
-        if (targetRig != null) {
-            targetRig.useGravity = true;
-            targetRig.AddForce(floatLocation.transform.forward*launchSpeed, ForceMode.Impulse);
-            target = null;
-            isLaunching = false;
+        if (targetRb != null) {
+            targetRb.useGravity = true;
+            targetRb.AddForce(floatLocation.transform.forward*launchSpeed, ForceMode.Impulse);
+            targetRb = null;
         }
     }
 }
