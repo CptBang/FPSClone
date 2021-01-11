@@ -681,6 +681,12 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1565947909}
   m_PrefabAsset: {fileID: 0}
+--- !u!95 &809889007 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 9500000, guid: 8f0565f23a2b58541a475bd3c1393052,
+    type: 3}
+  m_PrefabInstance: {fileID: 1565947909}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &963194225
 GameObject:
   m_ObjectHideFlags: 0
@@ -1876,7 +1882,7 @@ MonoBehaviour:
   speed: 15
   jumpVelocity: 2
   cc: {fileID: 1987261587}
-  anim: {fileID: 0}
+  anim: {fileID: 809889007}
 --- !u!1 &2013235282
 GameObject:
   m_ObjectHideFlags: 0
